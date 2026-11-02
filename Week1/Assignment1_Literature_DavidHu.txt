@@ -1,0 +1,24 @@
+Paper: A single-cell atlas of transcribed cis-regulatory elements in the human genome. Moody, Kouno et al. (RIKEN, 2023)
+
+Answer the following questions
+3a.​ What is the medically relevant insight from the article?
+GWAS trait heritability was previously studied at the level of individual variants or genes, without cell-type resolution. This data shows that heritability can be localised to specific cell types' regulatory elements as well.
+This is interesting medically as we now have some idea of which cell type the causal regulatory variation acting on which results in the phenotype. This allows us generate much more specific groups of variants such as the immune cell tCRE modules that affect immune trait heritability. From here, one has much more ability to understand biochemical pathways and disease mechanisms, and hence help to design therapies that are better targeted. 
+In a similar vein, single cell resolution allows us to improve therapies that are already targeting certain cell types by targetting more specific subtypes. For example, Type 1 diabetes and Multiple Sclerosis has aberrant T cells. If we can find out which subtype of T cell is causing the issue, we would be able to better make drugs to target the subtype and not affect healthy T cells. 
+
+b.​ Which genomics technology/ technologies were used?
+Single-cell 5'-RNA-seq: Used to capture transcription start sites at single-cell resolution to identify tCREs
+Bulk CAGE (Cap Analysis of Gene Expression): Previous gold standard for finding transcription start sites. The current single cell improves on it by giving better resolution of what cell is doing what. 
+Partitioned LD-score regression: the statistical framework for linking tCRE modules to trait heritability. This allows us to find out if heritability is enriched in a particular region. The paper also uses modules as annotations, which is statistically more robust. 
+
+3.​ Further related research questions
+a.​ List and explain at least three questions/ hypotheses you can think of that
+extend the analysis presented in the paper.
+1) The atlas here uses a mostly Japanese ancestry cohort. One question that could be interesting is that how much does the tCRE modules differ between different human populations, and what is transferable across populations and what isnt. Given population specific LD structures, one would reasonably expect that a tCRE module enriched for a trait in one ancestry may behave differently in another. A simple test could be to run the S-LDSC with GWAS summary statistics from other cohorts (e.g. UKBB, Biobank Japan, All of us). 
+2) I work on infectious diseases, and such an atlas could be used to look at known infectious disease GWASes and better understand non-coding variant hits. By comparing the non-coding variant hits to immune modules, one could better prioritise which variants are regulatory in which immune cell type. 
+3) Archaic humans' (Denisovans and Neanderthals) introgressed segments are enriched at immune loci. It could be worth checking if their archaic haplotypes carry tCRE variants, i.e. regulatory rather than coding changes? One could intersect published introgression maps with the tCRE coordinates to test this. 
+
+b. [Optional] Devise a computational analysis strategy for (some of) the listed
+questions under 3a.
+I would test the introgression haplotypes. I would first liftover archaic introgression coordinates to hg38, then intersect with the tCRE BED file. I would then test for enrichment as compared to non-introgressed regions to see if overlap with tCREs is more than by chance. I could then stratify by cell type, and look particularly in immune modules which I am working on. 
+
