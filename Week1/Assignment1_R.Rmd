@@ -1,0 +1,327 @@
+---
+title: "KI Bioinformatics H7F5633 - Assignment 1"
+author: "David Hu"
+date: "2026-11-03"
+output: html_document
+---
+
+## Task 3 - R Installation
+
+All required software was installed prior to the course.
+
+- R version 4.4.3 (2025-02-28)
+- BiocManager version 1.30.27
+- Tidyverse version 2.0.0
+- ggplot2 version 4.0.3
+
+## Task 4 - Basic R Operations
+
+### 1. Square root of 10
+```{r}
+sqrt(10)
+```
+The square root of 10 is 3.162.
+
+### 2. Logarithm of 32 to base 2
+```{r}
+log(32, base = 2)
+```
+This returns 5, because 2^5 = 32.
+
+### 3. Sum of numbers 1 to 1000
+```{r}
+sum(seq(1, 1000))
+```
+The sum of all integers from 1 to 1000 is 500,500.
+
+### 4. Sum of even numbers from 2 to 1000
+```{r}
+sum(seq(2, 1000, 2))
+```
+By specifying a step of 2 starting from 2, seq() generates only even numbers.
+The sum is 250,500.
+
+### 5. Pairwise comparisons for 100 genes
+```{r}
+choose(100, 2)
+```
+Order does not matter for a pairwise comparison — gene A vs gene B is the
+same as gene B vs gene A — so we use combinations. There are 4,950 possible
+pairwise comparisons for 100 genes.
+
+### 6. Ways to arrange 100 genes in triples
+```{r}
+factorial(100) / factorial(100 - 3)
+```
+Unlike pairwise comparisons, arrangements imply order matters — gene A→B→C
+is distinct from gene C→B→A. This uses the permutations formula n!/(n-k)!.
+There are 970,200 ways to arrange 100 genes in triples. 
+
+## Task 5 - Using R Example Datasets
+
+### 1-2. Loading and describing the CO2 dataset
+```{r}
+data("CO2")
+head(CO2)
+```
+Data talks about CO2 uptake in grass plants. It has 84 rows and 5 columns
+of data and is from an experiment on the cold tolerance of a grass species. 
+
+### 3. Average and median CO2 uptake by region
+```{r}
+quebec <- CO2[CO2$Type == "Quebec", ]
+mississippi <- CO2[CO2$Type == "Mississippi", ]
+
+mean(quebec$uptake)
+median(quebec$uptake)
+mean(mississippi$uptake)
+median(mississippi$uptake)
+```
+Quebec plants had a mean uptake of 33.54 and median of 37.15 umol/m^2/sec.
+Mississippi plants had a mean uptake of 20.88 and median of 19.30 umol/m^2/sec.
+
+## Task 6 - R Functions
+
+### 1
+```{r}
+mean_median_ratio <- function(x) {
+  result <- mean(x) / median(x)
+  return(result)
+}
+```
+Divides the mean by the median
+
+### 2
+```{r}
+ignore_top_bottom_mean <- function(x) {
+  x_trimmed <- x[x != min(x) & x != max(x)]
+  result <- mean(x_trimmed)
+  return(result)
+}
+```
+Removes the max and min and gives the mean of the rest of the values 
+
+### 3-4
+Pipes (%>%) pass the output of one function directly into the next.
+Use them for sequential data transformations. Avoid pipes when there are multiple 
+inputs/outputs per step, or when steps are not linear
+
+Apply functions (apply, lapply, sapply) replace loops by applying a 
+function across rows, columns, or list elements simultaneously. They 
+make code more concise and readable. Useful when running the same 
+operation across multiple genes, samples, or datasets, which is common 
+in genomics workflows.
+
+## Task 7 - Basic Visualization with R
+
+### 7.1a - Height distribution histograms
+
+```{r}
+library(remotes)
+library(ggplot2)
+magic_guys <- read.csv("magic_guys.csv")
+
+# Base R histogram
+jedi <- magic_guys[magic_guys$species == "jedi", ]
+sith <- magic_guys[magic_guys$species == "sith", ]
+
+hist(jedi$length, breaks=20, 
+     main="Jedi height distribution", 
+     xlab="Height")
+
+hist(sith$length, breaks=20, 
+     main="Sith height distribution", 
+     xlab="Height")
+
+# ggplot histogram
+ggplot(magic_guys, aes(x=length, fill=species)) +
+  geom_histogram(bins=20, alpha=0.6, position="dodge") +
+  labs(title="Height distribution by species", 
+       x="Height", 
+       y="Count")
+```
+
+### 7.1b - Boxplots
+
+```{r}
+ggplot(magic_guys, aes(x=species, y=length, fill=species))+
+    geom_boxplot() +
+  labs(title="Height distribution by species (boxplots)", x="Species", y="Height")
+```
+
+### 7.1c - Saving plots
+
+```{r}
+# PNG - for web/presentations, small file size
+png("height_boxplot.png")
+ggplot(magic_guys, aes(x=species, y=length, fill=species))+
+  geom_boxplot() +
+  labs(title="Height distribution by species (boxplots)", x="Species", y="Height")
+dev.off()
+
+# PDF - for publications, infinitely scalable
+pdf("height_boxplot.pdf")
+ggplot(magic_guys, aes(x=species, y=length, fill=species))+
+  geom_boxplot() +
+  labs(title="Height distribution by species (boxplots)", x="Species", y="Height")
+dev.off()
+
+# SVG - for editing in Illustrator/Inkscape
+svg("height_boxplot.svg")
+ggplot(magic_guys, aes(x=species, y=length, fill=species))+
+  geom_boxplot() +
+  labs(title="Height distribution by species (boxplots)", x="Species", y="Height")
+dev.off()
+```
+PNG is appropriate for digital use where file size matters. PDF is the 
+standard for academic publications as it is vector-based and scales 
+without pixelation. SVG is useful when the figure needs further editing 
+in vector graphics software such as Inkscape or Adobe Illustrator.
+
+### 7.2a - Microarray matrix dimensions
+
+```{r}
+microarray <- read.table("microarray_data.tab", header=TRUE, sep="\t")
+dim(microarray)
+head(microarray[, 1:5])
+```
+
+### 7.2b - Missing values per gene
+
+```{r}
+na_counts <- colSums(is.na(microarray))
+
+ggplot(data.frame(gene=names(na_counts), na_count=na_counts),
+       aes(x=na_count)) +
+  geom_histogram(bins=50) +
+  labs(title="Missing values per gene",
+       x="Number of missing values",
+       y="Number of genes")
+```
+
+### 7.2c - Genes exceeding missingness thresholds
+
+```{r}
+genes_10 <- names(na_counts[na_counts > 0.1 * nrow(microarray)])
+genes_20 <- names(na_counts[na_counts > 0.2 * nrow(microarray)])
+genes_50 <- names(na_counts[na_counts > 0.5 * nrow(microarray)])
+```
+### 7.2d - Imputing missing values with gene mean
+
+```{r}
+microarray_imputed <- as.data.frame(apply(microarray, 2, function(x) {
+  x[is.na(x)] <- mean(x, na.rm=TRUE)
+  return(x)
+}))
+```
+
+### 7.3 - CO2 dataset visualisation
+
+```{r}
+ggplot(CO2, aes(x=conc, y=uptake, color=Type, linetype=Treatment)) +
+  geom_point() +
+  geom_smooth(se=FALSE) +
+  labs(title="CO2 uptake vs concentration by type and treatment",
+       x="CO2 concentration (mL/L)",
+       y="CO2 uptake (umol/m^2/sec)")
+```
+Plotting uptake against concentration, split by both Type and Treatment,
+reveals several patterns not visible from summary statistics alone. Uptake
+increases with concentration but plateaus at higher levels, showing 
+diminishing returns. Quebec plants consistently show higher uptake than 
+Mississippi plants. Chilling reduces uptake more severely in 
+Mississippi plants than Quebec plants suggesting that Quebec plants have greater cold tolerance. 
+
+## Task 8 - Tidybiology Package
+
+### Installation and loading
+```{r}
+library(tidybiology)
+library(tidyverse)
+
+data(chromosome)
+data(proteins)
+
+head(chromosome)
+head(proteins)
+```
+The chromosome dataset contains 24 rows (one per chromosome) and 14 variables
+including chromosome length, number of variations, protein coding genes, and 
+various RNA types. The proteins dataset contains ~20,000 human proteins with 
+variables including sequence, length, and mass.
+
+### 8a - Summary statistics for chromosome data
+```{r}
+summary_statistic <- chromosome %>%
+  summarise(
+    mean_variations = mean(variations),
+    median_variations = median(variations),
+    max_variations = max(variations),
+    mean_proteincoding = mean(protein_codinggenes),
+    median_proteincoding = median(protein_codinggenes),
+    max_proteincoding = max(protein_codinggenes),
+    mean_mirna = mean(mi_rna),
+    median_mirna = median(mi_rna),
+    max_mirna = max(mi_rna)
+  )
+print(summary_statistic)
+```
+
+### 8b - Chromosome size distribution
+```{r}
+ggplot(chromosome, aes(x=basepairs)) +
+  geom_histogram(bins=10, fill="steelblue") +
+  labs(title="Chromosome size distribution",
+       x="Base pairs",
+       y="Count")
+```
+
+### 8c - Protein coding genes and miRNA vs chromosome length
+```{r}
+ggplot(chromosome, aes(x=basepairs, y=protein_codinggenes, label=id)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  geom_text(nudge_y=50) +
+  labs(title="Protein coding genes vs chromosome length",
+       x="Chromosome length (bp)",
+       y="Number of protein coding genes")
+
+ggplot(chromosome, aes(x=basepairs, y=mi_rna, label=id)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  geom_text(nudge_y=4) +
+  labs(title="miRNA count vs chromosome length",
+       x="Chromosome length (bp)",
+       y="Number of miRNAs")
+```
+Both protein coding genes and miRNA counts show a positive correlation with 
+chromosome length — larger chromosomes tend to contain more genes and miRNAs.
+
+### 8d - Protein length vs mass
+```{r}
+summary_statistic_2 <- proteins %>%
+  summarise(
+    mean_length = mean(length),
+    median_length = median(length),
+    max_length = max(length),
+    mean_mass = mean(mass),
+    median_mass = median(mass),
+    max_mass = max(mass)
+  )
+print(summary_statistic_2)
+
+ggplot(proteins, aes(x=length, y=mass)) +
+  geom_point(alpha=0.4, color="steelblue", size=1) +
+  geom_smooth(method="lm", color="orchid3") +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title="Protein mass vs length (log scale)",
+       x="Protein length (amino acids, log scale)",
+       y="Protein mass (Da, log scale)")
+```
+Protein mass and length show a near-perfect linear correlation on a log-log 
+scale, consistent with the fact that protein mass is directly determined by 
+amino acid composition and count. Log scaling was applied to both axes to reveal
+the distribution of the bulk of proteins, which are compressed into the bottom
+left of untransformed plot.
