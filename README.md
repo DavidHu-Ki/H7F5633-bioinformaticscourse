@@ -6,4 +6,4 @@
 ## Contents
 - `Week1/Assignment1.md` — Literature review (Task 1) and written tasks
 - `Week1/Assignment1_R.Rmd` — R tasks 4–8 with code and outputs
-- `data/` — datasets used in the analysis
+
