@@ -45,6 +45,7 @@ The sum is 250,500.
 ```{r}
 choose(100, 2)
 ```
+
 Order does not matter for a pairwise comparison — gene A vs gene B is the
 same as gene B vs gene A — so we use combinations. There are 4,950 possible
 pairwise comparisons for 100 genes.
@@ -53,6 +54,7 @@ pairwise comparisons for 100 genes.
 ```{r}
 factorial(100) / factorial(100 - 3)
 ```
+
 Unlike pairwise comparisons, arrangements imply order matters — gene A→B→C
 is distinct from gene C→B→A. This uses the permutations formula n!/(n-k)!.
 There are 970,200 ways to arrange 100 genes in triples. 
@@ -64,6 +66,7 @@ There are 970,200 ways to arrange 100 genes in triples.
 data("CO2")
 head(CO2)
 ```
+
 Data talks about CO2 uptake in grass plants. It has 84 rows and 5 columns
 of data and is from an experiment on the cold tolerance of a grass species. 
 
@@ -77,6 +80,7 @@ median(quebec$uptake)
 mean(mississippi$uptake)
 median(mississippi$uptake)
 ```
+
 Quebec plants had a mean uptake of 33.54 and median of 37.15 umol/m^2/sec.
 Mississippi plants had a mean uptake of 20.88 and median of 19.30 umol/m^2/sec.
 
@@ -89,6 +93,7 @@ mean_median_ratio <- function(x) {
   return(result)
 }
 ```
+
 Divides the mean by the median
 
 ### 2
@@ -99,6 +104,7 @@ ignore_top_bottom_mean <- function(x) {
   return(result)
 }
 ```
+
 Removes the max and min and gives the mean of the rest of the values 
 
 ### 3-4
@@ -173,6 +179,7 @@ ggplot(magic_guys, aes(x=species, y=length, fill=species))+
   labs(title="Height distribution by species (boxplots)", x="Species", y="Height")
 dev.off()
 ```
+
 PNG is appropriate for digital use where file size matters. PDF is the 
 standard for academic publications as it is vector-based and scales 
 without pixelation. SVG is useful when the figure needs further editing 
@@ -225,6 +232,7 @@ ggplot(CO2, aes(x=conc, y=uptake, color=Type, linetype=Treatment)) +
        x="CO2 concentration (mL/L)",
        y="CO2 uptake (umol/m^2/sec)")
 ```
+
 Plotting uptake against concentration, split by both Type and Treatment,
 reveals several patterns not visible from summary statistics alone. Uptake
 increases with concentration but plateaus at higher levels, showing 
@@ -245,6 +253,7 @@ data(proteins)
 head(chromosome)
 head(proteins)
 ```
+
 The chromosome dataset contains 24 rows (one per chromosome) and 14 variables
 including chromosome length, number of variations, protein coding genes, and 
 various RNA types. The proteins dataset contains ~20,000 human proteins with 
@@ -294,6 +303,7 @@ ggplot(chromosome, aes(x=basepairs, y=mi_rna, label=id)) +
        x="Chromosome length (bp)",
        y="Number of miRNAs")
 ```
+
 Both protein coding genes and miRNA counts show a positive correlation with 
 chromosome length — larger chromosomes tend to contain more genes and miRNAs.
 
@@ -320,6 +330,7 @@ ggplot(proteins, aes(x=length, y=mass)) +
        x="Protein length (amino acids, log scale)",
        y="Protein mass (Da, log scale)")
 ```
+
 Protein mass and length show a near-perfect linear correlation on a log-log 
 scale, consistent with the fact that protein mass is directly determined by 
 amino acid composition and count. Log scaling was applied to both axes to reveal
